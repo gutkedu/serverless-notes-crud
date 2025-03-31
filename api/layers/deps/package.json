@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "description": "Layer for AWS Lambda functions",
+  "scripts": {},
+  "dependencies": {
+    "zod": "^3.24.1",
+    "ksuid": "^3.0.0"
+  },
+  "devDependencies": {}
+}

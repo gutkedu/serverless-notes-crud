@@ -1,0 +1,12 @@
+@baseUrl=https://pwp1jfaysk.execute-api.us-east-1.amazonaws.com/
+
+###
+POST {{baseUrl}}/notes
+Content-Type: application/json
+
+{
+  "title": "Sample Note",
+  "content": "This is a sample note content.",
+  "tags": ["example", "note"],
+  "author": "John Doe"
+}

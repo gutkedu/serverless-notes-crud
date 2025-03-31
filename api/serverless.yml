@@ -1,0 +1,60 @@
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: serverless-notes-api
+frameworkVersion: "4"
+
+
+provider:
+  name: aws
+  profile: default # override with --aws-profile
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  timeout: 5
+  architecture: arm64
+  memorySize: 512 
+  environment:
+    TABLE_NAME: !ImportValue NotesTableName
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+stages:
+  dev:
+    params:
+      stage: dev
+
+  prod:
+    params:
+      stage: prod
+
+build:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    external:
+      - "@aws-lambda-powertools/logger"
+      - "@aws-sdk/client-dynamodb"
+      - "@aws-sdk/lib-dynamodb"
+      - "zod"
+      - "ksuid"
+
+layers:
+  deps: # DepsLambdaLayer
+    description: Node.js dependencies
+    path: ./layers/deps
+    compatibleRuntimes:
+      - nodejs20.x
+    compatibleArchitectures:
+      - x86_64
+      - arm64
+    
+functions:
+  createNoteFunction:
+    handler: ./src/lambdas/create-note-handler.createNoteHandler
+    events:
+      - httpApi:
+          path: /notes
+          method: POST
+    layers:
+      - !Ref DepsLambdaLayer
+      - !Sub arn:aws:lambda:${AWS::Region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:17
+    
