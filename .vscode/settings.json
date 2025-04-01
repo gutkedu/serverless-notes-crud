@@ -1,0 +1,17 @@
+{
+  "serverlessConsole.services": [
+    {
+      "type": "cloudformation",
+      "title": "notes-api-dev",
+      "timeOffsetInMs": 0,
+      "awsProfile": "gutkedu-terraform",
+      "stacks": [
+        {
+          "region": "us-east-1",
+          "stackName": "serverless-notes-api-dev",
+          "stage": "dev"
+        }
+      ]
+    }
+  ]
+}
