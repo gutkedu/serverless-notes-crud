@@ -36,6 +36,11 @@ export class NoteEntity extends Item<NoteProps> {
     return this.props.sender
   }
 
+  set sender(value: string) {
+    this.props.sender = value
+    this.touch()
+  }
+
   get createdAt(): string {
     return this.props.createdAt as string
   }
@@ -48,16 +53,40 @@ export class NoteEntity extends Item<NoteProps> {
     return this.props.content
   }
 
+  set content(value: string) {
+    this.props.content = value
+    this.touch()
+  }
+
   get tags(): string[] {
     return this.props.tags
+  }
+
+  set tags(value: string[]) {
+    this.props.tags = value
+    this.touch()
   }
 
   get shouldExpire(): boolean {
     return this.props.shouldExpire ?? false
   }
 
+  set shouldExpire(value: boolean) {
+    this.props.shouldExpire = value
+    this.touch()
+  }
+
   get ttl(): number {
     return this.props.ttl ?? 0
+  }
+
+  set ttl(value: number) {
+    this.props.ttl = value
+    this.touch()
+  }
+
+  touch() {
+    this.props.updatedAt = new Date().toISOString()
   }
 
   getDynamoKeys(): NoteDynamoKeys {

@@ -14,6 +14,9 @@ provider:
   environment:
     TABLE_NAME: !ImportValue NotesTableName
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  layers:
+      - !Ref DepsLambdaLayer
+      - !Sub arn:aws:lambda:${AWS::Region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:17
   iam:
     role:
       name: ServerlessNotesApiLambdaRole
@@ -66,7 +69,16 @@ functions:
       - httpApi:
           path: /notes
           method: POST
-    layers:
-      - !Ref DepsLambdaLayer
-      - !Sub arn:aws:lambda:${AWS::Region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:17
-    
+  fetchNotesFunction:
+    handler: ./src/lambdas/fetch-notes-handler.fetchNotesHandler
+    events:
+      - httpApi:
+          path: /notes
+          method: GET
+  updateNoteFunction:
+    handler: ./src/lambdas/update-note-handler.updateNoteHandler
+    events:
+      - httpApi:
+          path: /notes/{id}
+          method: PUT
+          
