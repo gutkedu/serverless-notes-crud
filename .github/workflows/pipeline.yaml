@@ -47,8 +47,8 @@ jobs:
         severity: 'CRITICAL,HIGH,MEDIUM,LOW'
         timeout: '5m0s'
 
-  deploy-dev:
-    name: Deploy to Development
+  deploy-api-dev:
+    name: Deploy API stack to dev stage
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     environment: dev
@@ -56,6 +56,9 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: CD to api directory
+      run: cd api
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
@@ -78,7 +81,7 @@ jobs:
       run: serverless deploy --stage dev
 
   deploy-prod:
-    name: Deploy to Production
+    name: Deploy API stack to prod stage
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: prod
@@ -86,6 +89,9 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: CD to api directory
+      run: cd api
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
@@ -96,6 +102,69 @@ jobs:
     
     - name: Install dependencies
       run: npm ci
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+  
+    - name: Build and Deploy
+      run: serverless deploy --stage prod
+
+
+  deploy-database-dev:
+    name: Deploy Database stack to dev stage
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    environment: dev
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: CD to database directory
+      run: cd db
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+    
+    - name: Install serverless
+      run: npm install -g serverless
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+  
+    - name: Build and Deploy
+      run: serverless deploy --stage dev
+
+  deploy-database-prod:
+    name: Deploy Database stack to prod stage
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: prod
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: CD to database directory
+      run: cd db
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+    
+    - name: Install serverless
+      run: npm install -g serverless
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
