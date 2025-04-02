@@ -3,7 +3,7 @@ service: serverless-notes-db
 provider:
   name: aws
   region: us-east-1
-  profile: default # override with --aws-profile
+  # for profile, use -aws-profile
   stage: ${opt:stage, 'dev'}
 
 resources:
