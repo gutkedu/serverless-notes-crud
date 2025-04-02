@@ -62,7 +62,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
     - name: serverless deploy
-      uses: serverless/github-action@v4.0
+      uses: serverless/github-action@v4
       with:
         args: -c "cd ./api && serverless deploy --stage dev"
         entrypoint: /bin/sh
@@ -94,7 +94,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
   
     - name: serverless deploy
-      uses: serverless/github-action@v4.0
+      uses: serverless/github-action@v4
       with:
         args: -c "cd ./api && serverless deploy --stage prod"
         entrypoint: /bin/sh
@@ -126,7 +126,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
   
     - name: serverless deploy
-      uses: serverless/github-action@v4.0
+      uses: serverless/github-action@v4
       with:
         args: -c "cd ./db && serverless deploy --stage dev"
         entrypoint: /bin/sh
@@ -158,7 +158,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
   
     - name: serverless deploy
-      uses: serverless/github-action@v4.0
+      uses: serverless/github-action@v4
       with:
         args: -c "cd ./db && serverless deploy --stage prod"
         entrypoint: /bin/sh
