@@ -25,7 +25,6 @@ jobs:
       with:
         node-version: '20.x'
         cache: 'npm'
-        cache-dependency-path: ./api/package-lock.json
 
     - name: Install dependencies
       working-directory: ./api
@@ -64,7 +63,6 @@ jobs:
       with:
         node-version: '20.x'
         cache: 'npm'
-        cache-dependency-path: ./api/package-lock.json
     
     - name: Install dependencies
       working-directory: ./api
@@ -95,7 +93,6 @@ jobs:
       with:
         node-version: '20.x'
         cache: 'npm'
-        cache-dependency-path: ./api/package-lock.json
     
     - name: Install dependencies
       working-directory: ./api
