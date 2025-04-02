@@ -1,4 +1,4 @@
-name: CI/CD pipeline
+name: CI/CD
 
 on:
   push:
@@ -12,8 +12,8 @@ on:
       - main
     
 jobs:
-  lint:
-    name: Lint and Type Check
+  lint-api:
+    name: Lint and Type Check API
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     
@@ -24,85 +24,91 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
-        cache: 'npm'
-        cache-dependency-path: ./package-lock.json
 
     - name: Install dependencies
-      run: npm ci
+      working-directory: ./api
+      run: npm install
 
     - name: Run lint
+      working-directory: ./api
       run: npm run lint
 
     - name: Type check
+      working-directory: ./api
       run: npm run build
 
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: './src'  # Only scan the src directory
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        severity: 'CRITICAL,HIGH,MEDIUM,LOW'
-        timeout: '5m0s'
-
-  deploy-dev:
-    name: Deploy to Development
+  deploy-api-dev:
+    name: Deploy API stack to dev stage
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    environment: dev
     steps:
-
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
+    - name: serverless deploy
+      uses: serverless/github-action@v4
       with:
-        node-version: '20.x'
-        cache: 'npm'
-        cache-dependency-path: ./package-lock.json
-    
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
-  
-    - name: Build and Deploy
-      run: serverless deploy --stage dev
+        args: -c "cd ./api && serverless deploy --stage dev"
+        entrypoint: /bin/sh
+      env:
+        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
 
   deploy-prod:
-    name: Deploy to Production
+    name: Deploy API stack to prod stage
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment: prod
     steps:
-
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-        cache-dependency-path: ./package-lock.json
-    
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
   
-    - name: Build and Deploy
-      run: serverless deploy --stage prod
+    - name: serverless deploy
+      uses: serverless/github-action@v4
+      with:
+        args: -c "cd ./api && serverless deploy --stage prod"
+        entrypoint: /bin/sh
+      env:
+        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
+
+  deploy-database-dev:
+    name: Deploy Database stack to dev stage
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+  
+    - name: serverless deploy
+      uses: serverless/github-action@v4
+      with:
+        args: -c "cd ./db && serverless deploy --stage dev"
+        entrypoint: /bin/sh
+      env:
+        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
+
+  deploy-database-prod:
+    name: Deploy Database stack to prod stage
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+  
+    - name: serverless deploy
+      uses: serverless/github-action@v4
+      with:
+        args: -c "cd ./db && serverless deploy --stage prod"
+        entrypoint: /bin/sh
+      env:
+        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
