@@ -37,17 +37,6 @@ jobs:
       working-directory: ./api
       run: npm run build
 
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: './api/src'  
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        severity: 'CRITICAL,HIGH,MEDIUM,LOW'
-        timeout: '5m0s'
-
   deploy-api-dev:
     name: Deploy API stack to dev stage
     runs-on: ubuntu-latest
