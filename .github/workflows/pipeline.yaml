@@ -20,30 +20,30 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: CD to api directory
-      run: cd api
-
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
         cache: 'npm'
-        cache-dependency-path: ./package-lock.json
+        cache-dependency-path: ./api/package-lock.json
 
     - name: Install dependencies
+      working-directory: ./api
       run: npm ci
 
     - name: Run lint
+      working-directory: ./api
       run: npm run lint
 
     - name: Type check
+      working-directory: ./api
       run: npm run build
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
-        scan-ref: './src'  # Only scan the src directory
+        scan-ref: './api/src'  
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
@@ -56,21 +56,18 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     environment: dev
     steps:
-
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: CD to api directory
-      run: cd api
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
         cache: 'npm'
-        cache-dependency-path: ./package-lock.json
+        cache-dependency-path: ./api/package-lock.json
     
     - name: Install dependencies
+      working-directory: ./api
       run: npm ci
 
     - name: Configure AWS credentials
@@ -81,7 +78,8 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
   
     - name: Build and Deploy
-      run: serverless deploy --stage dev
+      working-directory: ./api
+      run: npx serverless deploy --stage dev
 
   deploy-prod:
     name: Deploy API stack to prod stage
@@ -89,21 +87,18 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: prod
     steps:
-
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: CD to api directory
-      run: cd api
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
         cache: 'npm'
-        cache-dependency-path: ./package-lock.json
+        cache-dependency-path: ./api/package-lock.json
     
     - name: Install dependencies
+      working-directory: ./api
       run: npm ci
 
     - name: Configure AWS credentials
@@ -114,8 +109,8 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
   
     - name: Build and Deploy
-      run: serverless deploy --stage prod
-
+      working-directory: ./api
+      run: npx serverless deploy --stage prod
 
   deploy-database-dev:
     name: Deploy Database stack to dev stage
@@ -123,20 +118,17 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     environment: dev
     steps:
-
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: CD to database directory
-      run: cd db
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
     
-    - name: Install serverless
-      run: npm install -g serverless
+    - name: Install dependencies
+      working-directory: ./db
+      run: npm i -g serverless
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -146,7 +138,8 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
   
     - name: Build and Deploy
-      run: serverless deploy --stage dev
+      working-directory: ./db
+      run: npx serverless deploy --stage dev
 
   deploy-database-prod:
     name: Deploy Database stack to prod stage
@@ -154,20 +147,17 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: prod
     steps:
-
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: CD to database directory
-      run: cd db
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
     
-    - name: Install serverless
-      run: npm install -g serverless
+    - name: Install dependencies
+      working-directory: ./db
+      run: npm i -g serverless
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -177,4 +167,5 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
   
     - name: Build and Deploy
-      run: serverless deploy --stage prod
+      working-directory: ./db
+      run: npx serverless deploy --stage prod
