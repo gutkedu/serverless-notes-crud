@@ -60,14 +60,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
-
-    - name: Serverless Authentication
-      working-directory: ./api
-      run: npx serverless login --provider-token=${{ secrets.SERVERLESS_ACCESS_TOKEN }}
   
     - name: Build and Deploy
       working-directory: ./api
       run: npx serverless deploy --stage dev
+      env:
+        SERVERLESS_ACCESS_TOKEN: ${{ secrets.SERVERLESS_ACCESS_TOKEN }}
 
   deploy-prod:
     name: Deploy API stack to prod stage
@@ -92,14 +90,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
-
-    - name: Serverless Authentication
-      working-directory: ./api
-      run: npx serverless login --provider-token=${{ secrets.SERVERLESS_ACCESS_TOKEN }}
   
     - name: Build and Deploy
       working-directory: ./api
       run: npx serverless deploy --stage prod
+      env:
+        SERVERLESS_ACCESS_TOKEN: ${{ secrets.SERVERLESS_ACCESS_TOKEN }}
 
   deploy-database-dev:
     name: Deploy Database stack to dev stage
@@ -124,14 +120,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
-
-    - name: Serverless Authentication
-      working-directory: ./db
-      run: npx serverless login --provider-token=${{ secrets.SERVERLESS_ACCESS_TOKEN }}
   
     - name: Build and Deploy
       working-directory: ./db
       run: npx serverless deploy --stage dev
+      env:
+        SERVERLESS_ACCESS_TOKEN: ${{ secrets.SERVERLESS_ACCESS_TOKEN }}
 
   deploy-database-prod:
     name: Deploy Database stack to prod stage
@@ -156,11 +150,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
-
-    - name: Serverless Authentication
-      working-directory: ./db
-      run: npx serverless login --provider-token=${{ secrets.SERVERLESS_ACCESS_TOKEN }}
   
     - name: Build and Deploy
       working-directory: ./db
       run: npx serverless deploy --stage prod
+      env:
+        SERVERLESS_ACCESS_TOKEN: ${{ secrets.SERVERLESS_ACCESS_TOKEN }}
