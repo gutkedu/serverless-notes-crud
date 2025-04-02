@@ -64,8 +64,8 @@ jobs:
     - name: serverless deploy
       uses: serverless/github-action@v3.2
       with:
-        working-directory: ./api
-        args: deploy --stage dev
+        args: -c "cd ./api && serverless deploy --stage dev"
+        entrypoint: /bin/sh
       env:
         SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
 
@@ -96,8 +96,8 @@ jobs:
     - name: serverless deploy
       uses: serverless/github-action@v3.2
       with:
-        working-directory: ./api
-        args: deploy --stage prod
+        args: -c "cd ./api && serverless deploy --stage prod"
+        entrypoint: /bin/sh
       env:
         SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
 
@@ -128,8 +128,8 @@ jobs:
     - name: serverless deploy
       uses: serverless/github-action@v3.2
       with:
-        working-directory: ./db
-        args: deploy --stage dev
+        args: -c "cd ./db && serverless deploy --stage dev"
+        entrypoint: /bin/sh
       env:
         SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
 
@@ -160,7 +160,7 @@ jobs:
     - name: serverless deploy
       uses: serverless/github-action@v3.2
       with:
-        working-directory: ./db
-        args: deploy --stage prod
+        args: -c "cd ./db && serverless deploy --stage prod"
+        entrypoint: /bin/sh
       env:
         SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
