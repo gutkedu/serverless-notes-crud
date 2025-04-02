@@ -1,6 +1,6 @@
-# Serverless Notes CRUD Application Documentation
+# 📝 Serverless Notes CRUD Application Documentation
 
-## Architecture Overview
+## 🏗️ Architecture Overview
 
 The application consists of two main components deployed as separate CloudFormation stacks:
 
@@ -31,28 +31,53 @@ graph TD
         DynamoDB[(DynamoDB Table)]
     end
 
-    APIGW --> CreateLambda
-    APIGW --> FetchLambda
-    APIGW --> UpdateLambda
-    APIGW --> DeleteLambda
+    Client[Client] -->|HTTP Request| APIGW
+    APIGW -->|POST /notes| CreateLambda
+    APIGW -->|GET /notes| FetchLambda
+    APIGW -->|PUT /notes/{id}| UpdateLambda
+    APIGW -->|DELETE /notes/{id}| DeleteLambda
     
     CreateLambda --> LambdaLayer
     FetchLambda --> LambdaLayer
     UpdateLambda --> LambdaLayer
     DeleteLambda --> LambdaLayer
     
-    CreateLambda --> DynamoDB
-    FetchLambda --> DynamoDB
-    UpdateLambda --> DynamoDB
-    DeleteLambda --> DynamoDB
+    CreateLambda -->|PutItem| DynamoDB
+    FetchLambda -->|Query| DynamoDB
+    UpdateLambda -->|UpdateItem| DynamoDB
+    DeleteLambda -->|DeleteItem| DynamoDB
 ```
 
-## API Documentation
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js v20 or later
+- AWS CLI configured with appropriate credentials
+- Serverless Framework CLI installed (`npm install -g serverless`)
+
+### Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/serverless-notes-crud.git
+   cd serverless-notes-crud
+   ```
+
+2. Install dependencies:
+   ```
+   cd api
+   npm install
+   ```
+
+## 🌐 API Documentation
 
 Base URL: `https://pwp1jfaysk.execute-api.us-east-1.amazonaws.com/`
 
 ### Create Note
-- **Endpoint**: `POST /notes`
+
+- **Method**: `POST`
+- **Endpoint**: `/notes`
 - **Content-Type**: `application/json`
 - **Request Body**:
   ```json
@@ -63,17 +88,48 @@ Base URL: `https://pwp1jfaysk.execute-api.us-east-1.amazonaws.com/`
     "shouldExpire": boolean
   }
   ```
-- **Description**: Creates a new note with the specified content, tags, sender, and expiration setting.
+- **Response**: `201 Created`
+  ```json
+  {
+    "id": "string",
+    "content": "string",
+    "tags": ["string"],
+    "sender": "string",
+    "shouldExpire": boolean,
+    "createdAt": "string",
+    "updatedAt": "string"
+  }
+  ```
 
 ### Fetch Notes
-- **Endpoint**: `GET /notes`
+
+- **Method**: `GET`
+- **Endpoint**: `/notes`
 - **Query Parameters**:
   - `limit`: Number of notes to return (default: 10)
   - `nextToken`: Pagination token for next set of results
-- **Description**: Retrieves a list of notes with optional pagination.
+- **Response**: `200 OK`
+  ```json
+  {
+    "notes": [
+      {
+        "id": "string",
+        "content": "string",
+        "tags": ["string"],
+        "sender": "string",
+        "shouldExpire": boolean,
+        "createdAt": "string",
+        "updatedAt": "string"
+      }
+    ],
+    "token": "string"
+  }
+  ```
 
 ### Update Note
-- **Endpoint**: `PUT /notes/{id}`
+
+- **Method**: `PUT`
+- **Endpoint**: `/notes/{id}`
 - **Content-Type**: `application/json`
 - **Request Body**:
   ```json
@@ -84,15 +140,82 @@ Base URL: `https://pwp1jfaysk.execute-api.us-east-1.amazonaws.com/`
     "shouldExpire": boolean
   }
   ```
-- **Description**: Updates an existing note with the specified ID.
+- **Response**: `200 OK`
+  ```json
+  {
+    "id": "string",
+    "content": "string",
+    "tags": ["string"],
+    "sender": "string",
+    "shouldExpire": boolean,
+    "createdAt": "string",
+    "updatedAt": "string"
+  }
+  ```
 
 ### Delete Note
-- **Endpoint**: `DELETE /notes/{id}`
-- **Description**: Deletes the note with the specified ID.
 
-## Technical Details
+- **Method**: `DELETE`
+- **Endpoint**: `/notes/{id}`
+- **Response**: `200 OK`
+  ```json
+  {
+    "message": "Note deleted successfully"
+  }
+  ```
+
+## 💻 Local Development
+
+To develop and test locally:
+
+1. Install dependencies in both root and api directories:
+   ```
+   npm install
+   cd api && npm install
+   ```
+
+2. Start the local development server:
+   ```
+   cd api
+   npm run serverless dev
+   ```
+
+3. Test API endpoints using the provided HTTP file:
+   ```
+   cd docs
+   # Use REST Client extension in VS Code to execute requests in api.http
+   ```
+
+## 🚢 Deployment
+
+The application can be deployed using the Serverless Framework:
+
+### Manual Deployment
+
+1. Deploy the database stack first:
+   ```
+   cd db
+   serverless deploy --stage dev --aws-profile your-profile
+   ```
+
+2. Deploy the API stack:
+   ```
+   cd api
+   serverless deploy --stage dev --aws-profile your-profile
+   ```
+
+### CI/CD Pipeline
+
+The repository includes GitHub Actions workflows for automated CI/CD:
+
+- Pull Requests: Runs linting and type checking
+- Push to `develop`: Deploys to development environment
+- Push to `main`: Deploys to production environment
+
+## 🛠️ Technical Details
 
 ### Database Schema
+
 - **Table Name**: NotesTable
 - **Primary Key**:
   - Partition Key (HASH): `pk` (String)
@@ -100,6 +223,7 @@ Base URL: `https://pwp1jfaysk.execute-api.us-east-1.amazonaws.com/`
 - **TTL**: Enabled on `ttl` attribute
 
 ### Lambda Configuration
+
 - **Runtime**: Node.js 20.x
 - **Architecture**: ARM64
 - **Memory**: 512MB
