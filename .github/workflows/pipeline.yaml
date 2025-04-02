@@ -1,4 +1,4 @@
-name: CI/CD pipeline
+name: CI/CD
 
 on:
   push:
@@ -12,13 +12,16 @@ on:
       - main
     
 jobs:
-  lint:
-    name: Lint and Type Check
+  lint-api:
+    name: Lint and Type Check API
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     
     steps:
     - uses: actions/checkout@v4
+
+    - name: CD to api directory
+      run: cd api
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
