@@ -1,4 +1,3 @@
-# "service" is the name of this project. This will also be added to your AWS resource names.
 service: serverless-notes-api
 frameworkVersion: "4"
 
@@ -81,4 +80,10 @@ functions:
       - httpApi:
           path: /notes/{id}
           method: PUT
+  deleteNoteFunction:
+    handler: ./src/lambdas/delete-note-handler.deleteNoteHandler
+    events:
+      - httpApi:
+          path: /notes/{id}
+          method: DELETE
           

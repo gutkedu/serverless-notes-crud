@@ -12,13 +12,14 @@ Content-Type: application/json
 }
 
 
-###
-GET {{baseUrl}}/notes?limit=2&nextToken=eyJwayI6Ik5PVEUiLCJzayI6IklEIzJ2Nmd5R1BNa3pRQ2ozMHdkRHQwWGN3S240NSJ9
+### 
+# QueryOptions: limit, nextToken
+GET {{baseUrl}}/notes?limit=10
 Content-Type: application/json
 
 ###
 
-PUT {{baseUrl}}/notes/2v6gssx29ZdzJL99QO58QAVhSI4
+PUT {{baseUrl}}/notes/2v9S4sEUjH2vlvGzPbAmF6UmFg7
 Content-Type: application/json
 
 {
@@ -27,3 +28,8 @@ Content-Type: application/json
   "sender":"edu",
   "shouldExpire": false
 }
+
+
+###
+DELETE {{baseUrl}}/notes/2v9S4sEUjH2vlvGzPbAmF6UmFg7
+Content-Type: application/json

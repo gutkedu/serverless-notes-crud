@@ -2,8 +2,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "npx tsc",
-    "lint": "eslint . --quiet",
+    "build": "tsc --noEmit",
+    "lint": "eslint ./src --quiet",
     "deploy": "sls deploy --stage dev --aws-profile gutkedu-terraform"
   },
   "devDependencies": {

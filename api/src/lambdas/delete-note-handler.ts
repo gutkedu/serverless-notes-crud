@@ -1,4 +1,4 @@
-import { updateNote } from '@/functions/update-note'
+import { deleteNote } from '@/functions/delete-note'
 import { IntegrationError } from '@/shared/errors/integration-error'
 import { getLogger } from '@/shared/logger/get-logger'
 import { validateKsuid } from '@/shared/utils/validate-ksuid'
@@ -7,9 +7,9 @@ import { z } from 'zod'
 
 const logger = getLogger()
 
-export const updateNoteHandler: APIGatewayProxyHandler = async (event, context) => {
+export const deleteNoteHandler: APIGatewayProxyHandler = async (event, context) => {
   try {
-    logger.info('updateNoteHandler invoked', { event, context })
+    logger.info('deleteNoteHandler invoked', { event, context })
 
     const validateIdSchema = z.object({
       id: z.string().refine((id) => validateKsuid(id), {
@@ -19,31 +19,18 @@ export const updateNoteHandler: APIGatewayProxyHandler = async (event, context) 
 
     const { id } = validateIdSchema.parse(event.pathParameters)
 
-    const schema = z.object({
-      content: z.string().min(1).max(1000).optional(),
-      sender: z.string().min(1).max(50).optional(),
-      tags: z.array(z.string()).optional(),
-      shouldExpire: z.boolean().optional()
-    })
-
-    const body = JSON.parse(event.body || '{}')
-
-    const { content, sender, tags, shouldExpire } = schema.parse(body)
-
-    const note = await updateNote({
-      id,
-      content,
-      sender,
-      tags,
-      shouldExpire
+    await deleteNote({
+      id
     })
 
     return {
       statusCode: 200,
-      body: JSON.stringify(note)
+      body: JSON.stringify({
+        message: 'Note deleted successfully'
+      })
     }
   } catch (error) {
-    logger.error('Error in updateNoteHandler', { error })
+    logger.error('Error in deleteNoteHandler', { error })
 
     if (error instanceof z.ZodError) {
       return {
