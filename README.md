@@ -34,8 +34,8 @@ graph TD
     Client[Client] -->|HTTP Request| APIGW
     APIGW -->|POST /notes| CreateLambda
     APIGW -->|GET /notes| FetchLambda
-    APIGW -->|PUT /notes/{id}| UpdateLambda
-    APIGW -->|DELETE /notes/{id}| DeleteLambda
+    APIGW -->|PUT /notes/&#123;id&#125;| UpdateLambda
+    APIGW -->|DELETE /notes/&#123;id&#125;| DeleteLambda
     
     CreateLambda --> LambdaLayer
     FetchLambda --> LambdaLayer
