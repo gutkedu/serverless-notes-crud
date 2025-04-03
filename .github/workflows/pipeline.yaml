@@ -25,6 +25,8 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
+        cache: 'yarn'
+        cache-dependency-path: ./api/yarn.lock
 
     - name: Install dependencies
       working-directory: ./api
