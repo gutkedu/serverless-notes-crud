@@ -28,6 +28,10 @@ jobs:
         cache: 'yarn'
         cache-dependency-path: ./api/yarn.lock
 
+    - name: Install layer dependencies
+      working-directory: ./api/layers/deps
+      run: yarn install
+
     - name: Install dependencies
       working-directory: ./api
       run: yarn install
