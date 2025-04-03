@@ -12,8 +12,9 @@ on:
       - main
     
 jobs:
+  # Quality checks
   lint-api:
-    name: Lint and Type Check API
+    name: 🔍 Lint and Type Check API
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     
@@ -37,8 +38,9 @@ jobs:
       working-directory: ./api
       run: npm run build
 
+  # Development environment deployments
   deploy-database-dev:
-    name: Deploy Database stack to dev stage
+    name: 🗄️ Deploy Database to DEV
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     
@@ -58,7 +60,7 @@ jobs:
         AWS_REGION: ${{ vars.AWS_REGION }}
 
   deploy-api-dev:
-    name: Deploy API stack to dev stage
+    name: 🚀 Deploy API to DEV
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     needs: deploy-database-dev
@@ -78,8 +80,9 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ vars.AWS_REGION }}
 
+  # Production environment deployments
   deploy-database-prod:
-    name: Deploy Database stack to prod stage
+    name: 🗄️ Deploy Database to PROD
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: prod
@@ -99,8 +102,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ vars.AWS_REGION }}
 
-  deploy-prod:
-    name: Deploy API stack to prod stage
+  deploy-api-prod:
+    name: 🚀 Deploy API to PROD
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: prod
