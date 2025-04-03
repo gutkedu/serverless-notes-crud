@@ -30,15 +30,15 @@ jobs:
 
     - name: Install dependencies
       working-directory: ./api
-      run: npm install
+      run: yarn install
 
     - name: Run lint
       working-directory: ./api
-      run: npm run lint
+      run: yarn run lint
 
     - name: Type check
       working-directory: ./api
-      run: npm run build
+      run: yarn run build
 
   # Development environment deployments
   deploy-database-dev:
